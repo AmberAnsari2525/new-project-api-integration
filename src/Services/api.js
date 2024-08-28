@@ -42,3 +42,13 @@ export const fetchUserData = async () => {
         throw error;
     }
 };
+// user update 
+export const updateUserData = async () => {
+    try {
+        const response = await AxiosInstance.get("user/update");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        throw error;
+    }
+};

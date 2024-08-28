@@ -24,20 +24,31 @@ export const Login = () => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-
-        try{
+        try {
+            console.log("Sending request with data:", userData);
             const response = await Loginuser(userData);
-            if(response && response.token){
-                login(response.token)
-            }else if(response.error){
+            console.log("Response received:", response);
+            if (response && response.token) {
+                console.log("Login successful, token:", response.token);
+                login(response.token);
+            } else if (response.error) {
+                console.error("API returned an error:", response.error);
                 setError(response.error);
-            }else{
-                console.log("user Login", response)
+            } else {
+                console.log("Unexpected response format:", response);
             }
-        }catch(err){
-            console.log("user login faild", err)
+        } catch (err) {
+            if (err.response && err.response.status === 401) {
+                console.error("Invalid credentials:", err.response.data);
+                setError("Invalid email or password. Please try again.");
+            } else {
+                console.error("An unexpected error occurred:", err);
+                setError("An unexpected error occurred. Please try again later.");
+            }
+            console.log("user login failed", err);
         }
     }
+        
     return (
         <div>
             <div className='container'>

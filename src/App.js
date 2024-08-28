@@ -8,6 +8,7 @@ import { Viewprofile } from './Pages/View-profile';
 import { AuthProvider } from './Context/Authcontext';
 import AuthContext from './Context/Authcontext';
 import Navbar from './components/Navbar';
+import { UpdateProfile} from './Pages/updateprofile';
 
 function App() {
   return (
@@ -22,6 +23,11 @@ function App() {
                 {({ preventAuthAccess }) => preventAuthAccess(Signup)}
               </AuthContext.Consumer>
             } />
+             <Route path="sign-up" element={
+              <AuthContext.Consumer>
+                {({ preventAuthAccess }) => preventAuthAccess(Signup)}
+              </AuthContext.Consumer>
+            } />
             <Route path="/log-in" element={
               <AuthContext.Consumer>
                 {({ preventAuthAccess }) => preventAuthAccess(Login)}
@@ -30,6 +36,11 @@ function App() {
             <Route path="/profile" element={
               <AuthContext.Consumer>
                 {({ requireAuth }) => requireAuth(Viewprofile)}
+              </AuthContext.Consumer>
+            } />
+            <Route path="/update" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(UpdateProfile)}
               </AuthContext.Consumer>
             } />
             <Route path="*" element={<Errorpage />} />
