@@ -1,18 +1,17 @@
 import Button from 'react-bootstrap/Button';
-import React from 'react'
+import React, {useContext} from 'react'
 import { useState } from 'react';
 import { Link,  } from 'react-router-dom';
-import { registerUser } from '../Services/api';
-
+import { registerUser} from '../Services/api';
 export const Signup = () => {
-    const [errors, setErrors] = useState({});
+    const [errors, setError] = useState({});
     const [loading, setLoading] = useState(false); // Loading state
 
     const [userData, setuserData] = useState({
         name: '',
         email: '',
         password: '',
-        date: "",
+        date_of_birth: "",
 
     });
 
@@ -22,25 +21,55 @@ export const Signup = () => {
     };
 
     // Handle form submission
+    // Handle form submission
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true); // Set loading to true when submission starts
+        e.preventDefault(); // Prevent the default form submission behavior
+        setLoading(true); // Set loading state to true when submission starts
 
         try {
-            const response = await registerUser (userData);
-            setLoading(false); // Set loading to false when submission ends
-            if (response.errors) {
-                setErrors(response.errors); // Set validation errors if any
+            console.log("Sending request with data:", userData);
+            const response = await registerUser(userData);
+            console.log("Response received:", response);
+
+            // Check if the response contains a token
+            if (response && response.token) {
+                console.log("Register successful, token:", response.token);
+                // Remove the login function call
+                // Handle the token as needed (e.g., store it or use it for further requests)
+            } else if (response && response.error) {
+                // Handle API error response
+                console.error("API returned an error:", response.error);
+                setError(response.error);
             } else {
-                console.log("User Registered:", response);
-                // Optionally redirect to login page or show a success message
+                // Handle unexpected response format
+                console.log("Unexpected response format:", response);
+                setError("An unexpected error occurred. Please try again.");
             }
         } catch (err) {
-            setLoading(false); // Set loading to false on error
-            console.error("Registration failed:", err);
-            // Handle general errors (network issues, etc.)
+            // Improved error handling
+            if (err.response) {
+                // Handle known error responses from the API
+                if (err.response.status === 401) {
+                    console.error("Invalid credentials:", err.response.data);
+                    setError("Invalid email or password. Please try again.");
+                } else if (err.response.status === 400) {
+                    console.error("Bad request:", err.response.data);
+                    setError("There was a problem with your request. Please check your input and try again.");
+                } else {
+                    console.error("API error:", err.response.data);
+                    setError("An error occurred while communicating with the server. Please try again later.");
+                }
+            } else {
+                // Handle network or other errors
+                console.error("An unexpected error occurred:", err);
+                setError("An unexpected error occurred. Please try again later.");
+            }
+            console.log("User registration failed:", err);
+        } finally {
+            setLoading(false); // Ensure loading state is reset after submission
         }
     };
+
 
     return (
         <div className='container'>
@@ -91,7 +120,7 @@ export const Signup = () => {
                                 type="date"
                                 className="form-control"
                                 id="exampleInputDate"
-                                value={useState.date}
+                                value={userData.date}
                                 onChange={handleChange}
                             />
                         </div>

@@ -1,92 +1,164 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { updateUserData, fetchUserData } from '../Services/api';
+import { Spinner } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 
-export const UpdateProfile = () => {  // Changed from 'updateProfile' to 'UpdateProfile'
+export const UpdateProfile = () => {
+    const navigate = useNavigate();
     const [userData, setUserData] = useState({
         name: '',
         email: '',
-        number: '',
-        department: '',
-        designation: '',
-        language: '',
-        description: ''
+        date_of_birth: "",
     });
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const getUserData = async () => {
+            try {
+                const data = await fetchUserData();
+                console.log('Fetched user data:', data);
+                if (data && data.user) {
+                    setUserData(data.user);
+                } else {
+                    setError("Failed to load user data.");
+                }
+            } catch (err) {
+                console.error("Failed to fetch user data:", err);
+                setError(`An error occurred: ${err.message}`);
+            }
+        };
+
+        getUserData();
+    }, []);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
-        setUserData((prevProfile) => ({
+        setUserData(prevProfile => ({
             ...prevProfile,
             [id]: value
         }));
     };
-    const handleSubmit = () => {
 
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            console.log('Token:', token);
+            console.log('UserData:', userData);
+
+            const response = await updateUserData(userData);
+
+            // Log detailed response information
+            console.log('Full Response Object:', response);
+            console.log('Type of Response:', typeof response);
+            console.log('Response Data:', response.data);
+
+            if (response && response.data) {
+                if (response.data.user) {
+                    navigate('/profile', { state: { updatedUser: response.data.user } });
+                } else {
+                    console.error('User data is missing in the response.');
+                    setError('User data is missing in the response.');
+                }
+            } else {
+                console.error('Response or response data is not defined.');
+                setError('Response or response data is not defined.');
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            if (error.response) {
+                console.error('Error response:', error.response);
+                setError(`Failed to update user data. Status: ${error.response.status}`);
+            } else if (error.request) {
+                console.error('Error request:', error.request);
+                setError('No response received from the server.');
+            } else {
+                console.error('Error message:', error.message);
+                setError('Error in setting up the request.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     return (
-        <div className="col-lg-8">
-            <div className="card h-100">
-                <div className="card-body p-24">
-                    <ul className="nav border-gradient-tab nav-pills mb-20 d-inline-flex" id="pills-tab" role="tablist">
-                        <li className="nav-item" role="presentation">
-                            <button className="nav-link d-flex align-items-center px-24 active" id="pills-edit-profile-tab"
-                                data-bs-toggle="pill" data-bs-target="#pills-edit-profile" type="button" role="tab"
-                                aria-controls="pills-edit-profile" aria-selected="true">
-                                Edit Profile
-                            </button>
-                        </li>
-
-
-                    </ul>
-
-                    <div className="tab-content" id="pills-tabContent">
-                        <div className="tab-pane fade show active" id="pills-edit-profile" role="tabpanel"
-                            aria-labelledby="pills-edit-profile-tab" tabIndex="0">
-                            <h6 className="text-md text-primary-light mb-16">Profile Image</h6>
-                            <div className="mb-24 mt-16">
-                                <div className="avatar-upload">
-                                    <div className="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">
-                                        <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" hidden />
-                                        <label htmlFor="imageUpload"
-                                            className="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 radius-16">
-                                            <iconify-icon icon="fluent:edit-16-regular"></iconify-icon>
-                                        </label>
-                                    </div>
-                                    <img src="/assets/images/user-grid/user-grid-img14.png" alt="" className="w-200-px h-200-px rounded-circle object-fit-cover" />
-                                </div>
-                            </div>
-
-                            <form>
-                                <div className="row">
-                                    <div className="col-md-6 mb-24">
-                                        <label htmlFor="name" className="form-label">Full Name</label>
-                                        <input type="text" className="form-control" id="name" value={userData.name} onChange={handleChange} />
-                                    </div>
-                                    <div className="col-md-6 mb-24">
-                                        <label htmlFor="email" className="form-label">Email Address</label>
-                                        <input type="email" className="form-control" id="email" value={userData.email} onChange={handleChange} />
-                                    </div>
-                                    <div className="col-md-12 text-end">
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary border border-primary-600 text-md px-56 py-11 radius-8"
-                                            onClick={handleSubmit}
-                                        >
-                                            Save
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div className="tab-pane fade" id="pills-change-passwork" role="tabpanel"
-                            aria-labelledby="pills-change-passwork-tab" tabIndex="0">
-                            {/* Change Password Content */}
-                        </div>
-                        <div className="tab-pane fade" id="pills-notification" role="tabpanel"
-                            aria-labelledby="pills-notification-tab" tabIndex="0">
-                            {/* Notification Settings Content */}
-                        </div>
-                    </div>
+        <div className="container py-5">
+            <div className="card">
+                <div>
+                    <h3 className="card-title">Edit Profile</h3>
                 </div>
+                <div className="card-body" style={{backgroundColor: 'gray'}}>
+                    <form onSubmit={handleSubmit}>
+                        <div className="row">
+                            <div className="col-sm-12 mb-3">
+                                <label
+                                    htmlFor="name"
+                                    className="form-label fw-semibold text-primary-light text-sm mb-2"
+                                >
+                                    Full Name <span className="text-danger-600">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control radius-8"
+                                    id="name"
+                                    value={userData.name}
+                                    onChange={handleChange}
+                                    placeholder="Enter Full Name"
+                                />
+                            </div>
+                            <div className="col-sm-12 mb-3">
+                                <label
+                                    htmlFor="email"
+                                    className="form-label fw-semibold text-primary-light text-sm mb-2"
+                                >
+                                    Email <span className="text-danger-600">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    className="form-control radius-8"
+                                    id="email"
+                                    value={userData.email}
+                                    onChange={handleChange}
+                                    placeholder="Enter email address"
+                                />
+                            </div>
+                            <div className="col-sm-12 mb-3">
+                                <label
+                                    htmlFor="date_of_birth"
+                                    className="form-label fw-semibold text-primary-light text-sm mb-2"
+                                >
+                                    Date of Birth <span className="text-danger-600">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    className="form-control radius-8"
+                                    id="date_of_birth"
+                                    value={userData.date_of_birth}
+                                    onChange={handleChange}
+                                    placeholder="Enter Date of Birth"
+                                />
+                            </div>
+                        </div>
+                        <div className="d-flex align-items-center justify-content-center gap-3 mt-4">
+                            <button type="submit" className="btn btn-primary" disabled={loading}>
+                                {loading ? (
+                                    <>
+                                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                        {' '}Saving...
+                                    </>
+                                ) : (
+                                    "Save"
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {error && <p className="text-danger">{error}</p>}
             </div>
         </div>
-    )
-}
+    );
+};

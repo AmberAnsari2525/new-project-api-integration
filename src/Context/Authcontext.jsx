@@ -15,23 +15,24 @@ export const AuthProvider = ({ children }) => {
             try {
                 const decodedToken = jwtDecode(token);
                 if (decodedToken.exp * 1000 < Date.now()) {
-                    logout();
+                    console.log('Token has expired');
+                    // Optionally, you can prompt the user to log in again instead of logging them out automatically
                 } else {
                     setUser(decodedToken);
                 }
             } catch (error) {
                 console.error('Invalid token');
-                logout();
+                // Handle invalid token but don't remove it automatically
             }
         }
     }, []);
 
     const login = (token) => {
-        setToken(token);
+        setToken(token); // Store the token in local storage
         try {
             const decodedToken = jwtDecode(token);
             setUser(decodedToken);
-            navigate('/profile');
+            navigate('/Profile'); // Navigate to the Profile page after login
         } catch (error) {
             console.error('Error decoding token on login', error);
         }
@@ -48,8 +49,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     const preventAuthAccess = (Component) => {
-        return user ? <Navigate to="/profile" /> : <Component />;
-    }
+        return user ? <Navigate to="/Profile" /> : <Component />;
+    };
 
     return (
         <AuthContext.Provider value={{ user, login, logout, requireAuth, preventAuthAccess }}>
