@@ -28,17 +28,14 @@ export const Signup = () => {
     };
 
     return (
-        <div className="container py-5">
-            <div className="row justify-content-center">
+            <div >
                 <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-header text-center">
-                            <h2>Register</h2>
-                        </div>
+                    <div>
+                            <h2>Sign Up</h2>
+
                         <div className="card-body">
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label htmlFor="name" className="form-label text-start d-block">Name:</label>
                                     <input type="text"
                                            className={`form-control ${error.name ? 'is-invalid' : ''}`}
                                            id="name"
@@ -49,7 +46,6 @@ export const Signup = () => {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="email" className="form-label text-start d-block">Email:</label>
                                     <input type="email"
                                            className={`form-control ${error.email ? 'is-invalid' : ''}`}
                                            id="email"
@@ -59,7 +55,6 @@ export const Signup = () => {
                                            onChange={(e) => setEmail(e.target.value)}/>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="pwd" className="form-label text-start d-block">Password:</label>
                                     <input type="password"
                                            className={`form-control ${error.password ? 'is-invalid' : ''}`}
                                            id="pwd"
@@ -69,8 +64,7 @@ export const Signup = () => {
                                            onChange={(e) => setPassword(e.target.value)}/>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="dob" className="form-label text-start d-block">Date of
-                                        Birth:</label>
+
                                     <input
                                         type="date"
                                         className={`form-control ${error.date ? 'is-invalid' : ''}`}
@@ -89,7 +83,6 @@ export const Signup = () => {
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     )
 }
