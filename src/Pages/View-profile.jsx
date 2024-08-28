@@ -2,13 +2,22 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchUserData } from "../Services/api";
 
-export const Viewprofile = () => {
+export const ViewProfile = () => {
   const [userData, setUserData] = useState({
     name: '',
     email: '',
     date_of_birth: '',
   });
   const [error, setError] = useState(null);
+
+  // This function will handle changes in input fields
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setUserData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
   useEffect(() => {
     const getUserData = async () => {
@@ -56,22 +65,50 @@ export const Viewprofile = () => {
                         <span className="text-secondary-light mb-16">{userData.email}</span>
                       </div>
                       <div className="mt-24">
-                      <h6 className="text-xl mb-16">Personal Info</h6>
+                        <h6 className="text-xl mb-16">Personal Info</h6>
                         <ul>
                           <li className="d-flex align-items-center gap-1 mb-12">
                             <span className="w-30 text-md fw-semibold text-primary-light">Full Name</span>
-                            <span className="w-70 text-secondary-light fw-medium">:{userData.name}</span>
+                            <span className="w-70 text-secondary-light fw-medium">
+                              <input
+                                  type="text"
+                                  name="name"
+                                  value={userData.name}
+                                  onChange={handleChange}
+                                  onInput={handleChange}
+                                  onBlur={handleChange}
+                                  className="form-control"
+                              />
+                            </span>
                           </li>
                           <li className="d-flex align-items-center gap-1 mb-12">
                             <span className="w-30 text-md fw-semibold text-primary-light">Email</span>
-                            <span className="w-70 text-secondary-light fw-medium">: {userData.email}</span>
+                            <span className="w-70 text-secondary-light fw-medium">
+                              <input
+                                  type="email"
+                                  name="email"
+                                  value={userData.email}
+                                  onChange={handleChange}
+                                  onInput={handleChange}
+                                  onBlur={handleChange}
+                                  className="form-control"
+                              />
+                            </span>
                           </li>
                           <li className="d-flex align-items-center gap-1 mb-12">
-                            <span className="w-30 text-md fw-semibold text-primary-light">Date of birth</span>
-                            <span className="w-70 text-secondary-light fw-medium">: {userData.date_of_birth}</span>
+                            <span className="w-30 text-md fw-semibold text-primary-light">Date of Birth</span>
+                            <span className="w-70 text-secondary-light fw-medium">
+                              <input
+                                  type="date"
+                                  name="date_of_birth"
+                                  value={userData.date_of_birth}
+                                  onChange={handleChange}
+                                  onInput={handleChange}
+                                  onBlur={handleChange}
+                                  className="form-control"
+                              />
+                            </span>
                           </li>
-
-
                         </ul>
                       </div>
                     </div>
@@ -89,4 +126,4 @@ export const Viewprofile = () => {
         </div>
       </main>
   );
-}
+};
