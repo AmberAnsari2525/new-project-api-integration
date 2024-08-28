@@ -8,7 +8,8 @@ export const UpdateProfile = () => {
     const [userData, setUserData] = useState({
         name: '',
         email: '',
-        date_of_birth: "",
+        password: '',
+        date_of_birth: '',
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -41,46 +42,17 @@ export const UpdateProfile = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+        e.preventDefault(); // Prevent the default form submission behavior
+        setLoading(true); // Set loading state to true when the form is submitted
         try {
             const token = localStorage.getItem('token');
-            console.log('Token:', token);
-            console.log('UserData:', userData);
-
-            const response = await updateUserData(userData);
-
-            // Log detailed response information
-            console.log('Full Response Object:', response);
-            console.log('Type of Response:', typeof response);
-            console.log('Response Data:', response.data);
-
-            if (response && response.data) {
-                if (response.data.user) {
-                    navigate('/profile', { state: { updatedUser: response.data.user } });
-                } else {
-                    console.error('User data is missing in the response.');
-                    setError('User data is missing in the response.');
-                }
-            } else {
-                console.error('Response or response data is not defined.');
-                setError('Response or response data is not defined.');
-            }
-
+            await updateUserData(userData, token);
+            console.log("User data updated successfully");
+            navigate('/profile');
         } catch (error) {
-            console.error('Error:', error);
-            if (error.response) {
-                console.error('Error response:', error.response);
-                setError(`Failed to update user data. Status: ${error.response.status}`);
-            } else if (error.request) {
-                console.error('Error request:', error.request);
-                setError('No response received from the server.');
-            } else {
-                console.error('Error message:', error.message);
-                setError('Error in setting up the request.');
-            }
+            setError('Failed to update user data.');
         } finally {
-            setLoading(false);
+            setLoading(false); // Reset loading state after submission
         }
     };
 

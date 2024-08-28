@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import {AuthContext} from '../Context/Authcontext'
+import { Spinner } from 'react-bootstrap';
+import { AuthContext } from '../Context/Authcontext';
 import { Loginuser } from '../Services/api';
 
 export const Login = () => {
     const { login } = useContext(AuthContext); // Access login function from AuthContext
-
 
     const [userData, setUserData] = useState({
         email: '',
@@ -38,6 +38,7 @@ export const Login = () => {
                 console.log("Unexpected response format:", response);
             }
         } catch (err) {
+            setLoading(false); // Ensure loading state is turned off after a failure
             if (err.response && err.response.status === 401) {
                 console.error("Invalid credentials:", err.response.data);
                 setError("Invalid email or password. Please try again.");
@@ -45,55 +46,63 @@ export const Login = () => {
                 console.error("An unexpected error occurred:", err);
                 setError("An unexpected error occurred. Please try again later.");
             }
-            console.log("user login failed", err);
         }
-    }
-        
+    };
+
     return (
-        <div>
-            <div className='container'>
-                <div className='row'>
-
-                    <div className='col-lg-6'>
-                        <h1>Login</h1>
-
-                        <form onSubmit={handleSubmit}>
-
-                            <div className="mb-3">
-                                <input
-                                    placeholder='Email'
-                                    name="email"
-                                    type="email"
-                                    className="form-control"
-                                    id="exampleInputEmail"
-                                    aria-describedby="emailHelp"
-                                    value={userData.email}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <input
-                                    placeholder='Password'
-                                    name="password"
-                                    type="password"
-                                    className="form-control"
-                                    id="exampleInputPassword"
-                                    onChange={handleChange}
-                                />
-                            </div>
+        <div className="container py-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div>
+                        <div className="card-header text-center">
+                            <h2>Login</h2>
+                        </div>
+                        <div className="card-body">
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="email" className="form-label text-start d-block">Email:</label>
+                                    <input
+                                        type="email"
+                                        className={`form-control ${error ? 'is-invalid' : ''}`}
+                                        id="email"
+                                        placeholder="Enter email"
+                                        name="email"
+                                        value={userData.email}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="pwd" className="form-label text-start d-block">Password:</label>
+                                    <input
+                                        type="password"
+                                        className={`form-control ${error ? 'is-invalid' : ''}`}
+                                        id="pwd"
+                                        placeholder="Enter password"
+                                        name="password"
+                                        value={userData.password}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                {error && <div className="alert alert-danger">{error}</div>}
+                                <button type="submit" className="btn btn-primary" disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                            {' '}Signing In...
+                                        </>
+                                    ) : (
+                                        "Sign In"
+                                    )}
+                                </button>
+                            </form>
                             <b>
                                 <span className="text-decoration-none d-inline-block mb-3">Have no account? </span>
                                 <Link to="/" className="text-decoration-none">Sign Up</Link>
-                            </b>              <br />
-                            <button type="submit" className="btn btn-primary">
-                                Submit
-                            </button>
-                        </form>
-                    </div>
-                    <div className='col-lg-6'>
+                            </b>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

@@ -3,12 +3,12 @@ import { Errorpage } from './Pages/error';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Login } from './Pages/Log-in';
-import {Viewprofile} from './Pages/View-profile';
 import { Signup } from './Pages/Sign-up';
 import { AuthProvider } from './Context/Authcontext';
 import AuthContext from './Context/Authcontext';
 import Navbar from './components/Navbar';
 import { UpdateProfile} from './Pages/updateprofile';
+import {ViewProfile} from "./Pages/View-profile";
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
             } />
             <Route path="/profile" element={
               <AuthContext.Consumer>
-                {({ requireAuth }) => requireAuth(Viewprofile)}
+                {({ requireAuth }) => requireAuth(ViewProfile)}
               </AuthContext.Consumer>
             } />
             <Route path="/update" element={

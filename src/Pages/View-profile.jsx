@@ -10,15 +10,6 @@ export const ViewProfile = () => {
   });
   const [error, setError] = useState(null);
 
-  // This function will handle changes in input fields
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setUserData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
-
   useEffect(() => {
     const getUserData = async () => {
       try {
@@ -69,45 +60,15 @@ export const ViewProfile = () => {
                         <ul>
                           <li className="d-flex align-items-center gap-1 mb-12">
                             <span className="w-30 text-md fw-semibold text-primary-light">Full Name</span>
-                            <span className="w-70 text-secondary-light fw-medium">
-                              <input
-                                  type="text"
-                                  name="name"
-                                  value={userData.name}
-                                  onChange={handleChange}
-                                  onInput={handleChange}
-                                  onBlur={handleChange}
-                                  className="form-control"
-                              />
-                            </span>
+                            <span className="w-70 text-secondary-light fw-medium">: {userData.name}</span>
                           </li>
                           <li className="d-flex align-items-center gap-1 mb-12">
                             <span className="w-30 text-md fw-semibold text-primary-light">Email</span>
-                            <span className="w-70 text-secondary-light fw-medium">
-                              <input
-                                  type="email"
-                                  name="email"
-                                  value={userData.email}
-                                  onChange={handleChange}
-                                  onInput={handleChange}
-                                  onBlur={handleChange}
-                                  className="form-control"
-                              />
-                            </span>
+                            <span className="w-70 text-secondary-light fw-medium">: {userData.email}</span>
                           </li>
                           <li className="d-flex align-items-center gap-1 mb-12">
                             <span className="w-30 text-md fw-semibold text-primary-light">Date of Birth</span>
-                            <span className="w-70 text-secondary-light fw-medium">
-                              <input
-                                  type="date"
-                                  name="date_of_birth"
-                                  value={userData.date_of_birth}
-                                  onChange={handleChange}
-                                  onInput={handleChange}
-                                  onBlur={handleChange}
-                                  className="form-control"
-                              />
-                            </span>
+                            <span className="w-70 text-secondary-light fw-medium">: {userData.date_of_birth}</span>
                           </li>
                         </ul>
                       </div>
@@ -126,4 +87,4 @@ export const ViewProfile = () => {
         </div>
       </main>
   );
-};
+}

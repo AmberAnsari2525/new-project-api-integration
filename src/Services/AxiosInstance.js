@@ -1,14 +1,14 @@
 import  axios from 'axios';
 
 
-const AxiosInstance = axios.create({
+const  axiosinstance = axios.create({
     baseURL : 'https://jwtauth.techxdeveloper.com/api/',
     headers : {
         "Content-Type": "application/json",
     }
 });
 
-AxiosInstance.interceptors.request.use(
+axiosinstance.interceptors.request.use(
     (config) => {
         // Add authorization token to headers if available
         const token = localStorage.getItem("token");
@@ -23,7 +23,7 @@ AxiosInstance.interceptors.request.use(
     }
 );
 
-AxiosInstance.interceptors.response.use(
+axiosinstance.interceptors.response.use(
     (response) => {
         // Any status code that lies within the range of 2xx causes this function to trigger
         return response;
@@ -39,4 +39,4 @@ AxiosInstance.interceptors.response.use(
     }
 );
 
-export default AxiosInstance;
+export default  axiosinstance;

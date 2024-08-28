@@ -1,4 +1,4 @@
-import AxiosInstance from "./AxiosInstance";
+import  axiosinstance from "./AxiosInstance";
 import {setToken} from "./Auth";
 
 
@@ -6,7 +6,7 @@ import {setToken} from "./Auth";
 
 export  const registerUser = async (userData) => {
     try{
-    const response = await AxiosInstance.post('register', userData)
+    const response = await  axiosinstance.post('register', userData)
 if (response.data.token){
     setToken(response.data.token);
 }
@@ -21,7 +21,7 @@ catch(error)
 //Login Api
 export const Loginuser = async (userData) => {
     try{
-        const response = await AxiosInstance.post ("login", userData);
+        const response = await  axiosinstance.post ("login", userData);
         if (response.data.token){
             setToken(response.data.token);
         }
@@ -35,7 +35,7 @@ export const Loginuser = async (userData) => {
 
 export const fetchUserData = async () => {
     try {
-        const response = await AxiosInstance.get("user");
+        const response = await axiosinstance.get("user");
         return response.data;
     } catch (error) {
         console.error("Error fetching user data:", error);
@@ -44,7 +44,7 @@ export const fetchUserData = async () => {
 };
 export const updateUserData = async (data) => {
     try {
-        const response = await AxiosInstance.post("user/update",data);
+        const response = await  axiosinstance.post("user/update",data);
         return response.data;
     } catch (error) {
         console.error("Error fetching user data:", error);
