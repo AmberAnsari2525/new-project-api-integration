@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
     const preventAuthAccess = (Component) => {
         return user ? <Navigate to="/profile" /> : <Component />;
-    };
+    }
 
     return (
         <AuthContext.Provider value={{ user, login, logout, requireAuth, preventAuthAccess }}>
