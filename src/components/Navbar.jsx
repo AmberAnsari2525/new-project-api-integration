@@ -17,11 +17,19 @@ const Navbar = () => {
                         {user ? (
                             <>
                                 <li className="nav-item">
+                                    <Link className="nav-link" to="/order">Order</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/product-list">Product</Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link className="nav-link" to="/profile">Profile</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="#" onClick={logout}>Logout</Link>
                                 </li>
+
+
                             </>
                         ) : (
                             <>
@@ -31,6 +39,7 @@ const Navbar = () => {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/">Register</Link>
                                 </li>
+
                             </>
                         )}
                     </ul>

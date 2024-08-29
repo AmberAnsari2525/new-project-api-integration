@@ -42,6 +42,7 @@ export const fetchUserData = async () => {
         throw error;
     }
 };
+//update
 export const updateUserData = async (data) => {
     try {
         const response = await  axiosinstance.post("user/update",data);
@@ -51,3 +52,52 @@ export const updateUserData = async (data) => {
         throw error;
     }
 };
+export const getProduct = async (data) =>{
+    try{
+        const response = await axiosinstance.get ('products' ,data)
+        return response.data
+    }
+    catch (error){
+        console.error("product lit error" , error)
+        throw error;
+    }
+
+}
+
+//getting product
+export const getSingleProduct = async (id) => {
+    try {
+        const response = await axiosinstance.get("products/" + id);
+        return response.data;
+    } catch (error) {
+        console.error("Product list error", error);
+        throw error;
+    }
+};
+
+//addOrderList
+
+export const addProductList = async (orderData) => {
+    try {
+        const response = await axiosinstance.post('orders', orderData);
+        console.log('API call successful:', response); // Additional log
+        return response;
+    } catch (error) {
+        console.error('Error fetching orders list:', error);
+        throw error;
+    }
+};
+
+
+//getingProductlist
+
+export const getingProductList = async () => {
+    try{
+        const response = await axiosinstance.get ('orders');
+        return response.data;
+    }
+    catch (error){
+        console.error("Error fetching orders list:", error);
+        throw error;
+    }
+}

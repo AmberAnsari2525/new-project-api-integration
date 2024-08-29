@@ -59,55 +59,55 @@ export const UpdateProfile = () => {
 
     return (
         <div className="container py-5">
-            <div className="card">
-                <div>
+            <div className="card modern-card">
+                <div className="card-header">
                     <h3 className="card-title">Edit Profile</h3>
                 </div>
-                <div className="card-body" style={{backgroundColor: 'gray'}}>
+                <div className="card-body">
                     <form onSubmit={handleSubmit}>
                         <div className="row">
-                            <div className="col-sm-12 mb-3">
+                            <div className="col-12 mb-3">
                                 <label
                                     htmlFor="name"
-                                    className="form-label fw-semibold text-primary-light text-sm mb-2"
+                                    className="form-label fw-semibold text-primary mb-2"
                                 >
-                                    Full Name <span className="text-danger-600">*</span>
+                                    Full Name <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control radius-8"
+                                    className="form-control form-input"
                                     id="name"
                                     value={userData.name}
                                     onChange={handleChange}
                                     placeholder="Enter Full Name"
                                 />
                             </div>
-                            <div className="col-sm-12 mb-3">
+                            <div className="col-12 mb-3">
                                 <label
                                     htmlFor="email"
-                                    className="form-label fw-semibold text-primary-light text-sm mb-2"
+                                    className="form-label fw-semibold text-primary mb-2"
                                 >
-                                    Email <span className="text-danger-600">*</span>
+                                    Email <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="email"
-                                    className="form-control radius-8"
+                                    className="form-control form-input"
                                     id="email"
                                     value={userData.email}
                                     onChange={handleChange}
                                     placeholder="Enter email address"
                                 />
                             </div>
-                            <div className="col-sm-12 mb-3">
+                            <div className="col-12 mb-3">
                                 <label
                                     htmlFor="date_of_birth"
-                                    className="form-label fw-semibold text-primary-light text-sm mb-2"
+                                    className="form-label fw-semibold text-primary mb-2"
                                 >
-                                    Date of Birth <span className="text-danger-600">*</span>
+                                    Date of Birth <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="date"
-                                    className="form-control radius-8"
+                                    className="form-control form-input"
                                     id="date_of_birth"
                                     value={userData.date_of_birth}
                                     onChange={handleChange}
@@ -115,7 +115,7 @@ export const UpdateProfile = () => {
                                 />
                             </div>
                         </div>
-                        <div className="d-flex align-items-center justify-content-center gap-3 mt-4">
+                        <div className="d-flex justify-content-center mt-4">
                             <button type="submit" className="btn btn-primary" disabled={loading}>
                                 {loading ? (
                                     <>
@@ -129,8 +129,9 @@ export const UpdateProfile = () => {
                         </div>
                     </form>
                 </div>
-                {error && <p className="text-danger">{error}</p>}
+                {error && <p className="text-danger text-center mt-3">{error}</p>}
             </div>
         </div>
     );
 };
+

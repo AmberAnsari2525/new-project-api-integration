@@ -9,6 +9,10 @@ import AuthContext from './Context/Authcontext';
 import Navbar from './components/Navbar';
 import { UpdateProfile} from './Pages/updateprofile';
 import {ViewProfile} from "./Pages/View-profile";
+import {ProductList} from "./Pages/productlist";
+import {SingleProduct} from "./Pages/Singleproduct";
+import {AddProduct} from "./Pages/Addproduct";
+import {Order} from "./Pages/Order";
 
 function App() {
   return (
@@ -43,6 +47,19 @@ function App() {
                 {({ requireAuth }) => requireAuth(UpdateProfile)}
               </AuthContext.Consumer>
             } />
+            <Route path={"/product-list"}
+            element={<ProductList />} />
+
+            <Route path={"/product/:id"}
+                   element={<SingleProduct/>} />
+
+            <Route path={"/add-product"}
+                   element={<AddProduct />} />
+            <Route path={"//order"}
+            element={<Order />} />
+
+
+
             <Route path="*" element={<Errorpage />} />
           </Routes>
         </div>
