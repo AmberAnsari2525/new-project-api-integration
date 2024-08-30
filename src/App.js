@@ -13,6 +13,7 @@ import {ProductList} from "./Pages/productlist";
 import {SingleProduct} from "./Pages/Singleproduct";
 import {AddProduct} from "./Pages/Addproduct";
 import {Order} from "./Pages/Order";
+import {OrderDetail} from "./Pages/OrderDetail";
 
 function App() {
   return (
@@ -47,16 +48,39 @@ function App() {
                 {({ requireAuth }) => requireAuth(UpdateProfile)}
               </AuthContext.Consumer>
             } />
-            <Route path={"/product-list"}
-            element={<ProductList />} />
+            <Route path="/product-list" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(ProductList)}
+              </AuthContext.Consumer>
+            } />
+            <Route path="/product/:id" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(SingleProduct)}
+              </AuthContext.Consumer>
+            } />
 
-            <Route path={"/product/:id"}
-                   element={<SingleProduct/>} />
+            <Route path="/add-product" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(AddProduct)}
+              </AuthContext.Consumer>
+            } />
 
-            <Route path={"/add-product"}
-                   element={<AddProduct />} />
-            <Route path={"//order"}
-            element={<Order />} />
+            <Route path="/order" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(Order)}
+              </AuthContext.Consumer>
+            } />
+
+
+
+
+            <Route path="/orders:id" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(OrderDetail)}
+              </AuthContext.Consumer>
+            } />
+
+
 
 
 

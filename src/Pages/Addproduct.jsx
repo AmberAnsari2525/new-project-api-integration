@@ -24,10 +24,6 @@ export const AddProduct = () => {
         e.preventDefault();
         console.log('Order data being sent:', order); // Debugging line
 
-        if (!order.productId) {
-            setError('Product ID is required.');
-            return;
-        }
 
         try {
             const response = await addProductList(order);

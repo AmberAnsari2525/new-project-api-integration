@@ -1,29 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { getingProductList } from '../Services/api';
 
 export const Order = () => {
+    const navigate = useNavigate();
     const [getlist, setList] = useState([]);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchOrders = async () => {
             try {
                 const data = await getingProductList();
-                console.log('Fetched product data:', data);
                 setList(data);
             } catch (err) {
-                console.error('Error fetching products data:', err);
                 if (err.response && err.response.status === 401) {
-                    setError('Unauthorized access');
+                    setError("Unauthorized access. Please log in.");
                 } else {
                     setError(err.message);
                 }
             }
         };
-        fetchProducts();
+
+        fetchOrders();
     }, []);
+
+    const handleClick = (id) => {
+        navigate(`/orders/${id}`);
+    };
 
     return (
         <>
@@ -35,39 +39,37 @@ export const Order = () => {
             </div>
             {error ? (
                 <p className="text-danger">{error}</p>
+            ) : getlist.length === 0 ? (
+                <p>No orders available.</p>
             ) : (
-                <>
-                    {getlist.length === 0 ? (
-                        <p>No orders available.</p>
-                    ) : (
-                        <div className="table-responsive">
-                            <table className="table table-bordered table-striped table-hover">
-                                <thead className="thead-dark">
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Product ID</th>
-                                    <th scope="col">User ID</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Total Price</th>
-                                    <th scope="col">Payment Method</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {getlist.map((item, index) => (
-                                    <tr key={index}>
-                                        <th scope="row">{index + 1}</th>
-                                        <td>{item.product_id}</td>
-                                        <td>{item.user_id}</td>
-                                        <td>{item.quantity}</td>
-                                        <td>{item.total_price}</td>
-                                        <td>{item.payment_method}</td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </>
+                <div className="table-responsive">
+                    <table className="table table-bordered table-striped table-hover">
+                        <thead className="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Order ID</th>
+                            <th scope="col">User ID</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total Price</th>
+                            <th scope="col">Payment Method</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {getlist.map((item, index) => (
+                            <tr key={index}>
+                                <th scope="row">{index + 1}</th>
+                                <td onClick={() => handleClick(item.id)} style={{ cursor: 'pointer' }}>
+                                    {item.id}
+                                </td>
+                                <td>{item.user_id}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.total_price}</td>
+                                <td>{item.payment_method}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </>
     );
