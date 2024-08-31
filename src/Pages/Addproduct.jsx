@@ -7,9 +7,11 @@ export const AddProduct = () => {
         product_id: '',
         quantity: '',
         payment_method: '',
+        address: '',
     });
 
     const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate(); // Initialize the navigate function
 
     const handleChange = (e) => {
@@ -22,29 +24,20 @@ export const AddProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Order data being sent:', order); // Debugging line
-
+        setError(null); // Reset error state before making the request
+        setSuccessMessage(''); // Reset success message before making the request
 
         try {
-            const response = await addProductList(order);
-            console.log('API response:', response);
-            if (response.status === 200) {
-                console.log('Product added successfully:', response.data);
-                navigate('/order');
-            } else {
-                const errorMessage = response.data?.message || 'Failed to add product';
-                setError(errorMessage);
-                console.error('Error: Unable to add product', errorMessage);
-            }
-        } catch (err) {
-            const errorMessage = err?.response?.data?.message || 'Error adding product';
+            const result = await addProductList(order);
+            console.log('Product added successfully:', result);
+            setSuccessMessage('Product added successfully!');
+        } catch (error) {
+            // Handle network or unexpected errors
+            const errorMessage = error.response?.data?.message || 'Error adding product';
             setError(errorMessage);
-            console.error('Error:', errorMessage, err);
+            console.error('Error adding product:', error);
         }
     };
-
-
-
     return (
         <div className="container py-5">
             <div className="card">
@@ -78,6 +71,19 @@ export const AddProduct = () => {
                             />
                         </div>
                         <div className="mb-3">
+                            <label htmlFor="address" className="form-label">Address</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="address"
+                                name="address"
+                                value={order.address}
+                                onChange={handleChange}
+                                placeholder="Enter Address"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
                             <label htmlFor="payment_method" className="form-label">Payment Method</label>
                             <input
                                 type="text"
@@ -90,6 +96,7 @@ export const AddProduct = () => {
                                 required
                             />
                         </div>
+                        {successMessage && <p className="text-success">{successMessage}</p>}
                         {error && <p className="text-danger">{error}</p>}
                         <button type="submit" className="btn btn-primary">Add Product</button>
                     </form>

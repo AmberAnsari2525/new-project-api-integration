@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { updateUserData, fetchUserData } from '../Services/api';
 import { Spinner } from "react-bootstrap";
-import { useNavigate } from 'react-router-dom';
 
 export const UpdateProfile = () => {
-    const navigate = useNavigate();
     const [userData, setUserData] = useState({
         name: '',
         email: '',
         password: '',
         date_of_birth: '',
+        country: '',
+        city: '',
+        street: '',
+        zipcode: ''
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(''); // Added state for success message
 
     useEffect(() => {
         const getUserData = async () => {
@@ -42,20 +45,22 @@ export const UpdateProfile = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent the default form submission behavior
-        setLoading(true); // Set loading state to true when the form is submitted
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setSuccessMessage(''); // Reset success message before submission
         try {
             const token = localStorage.getItem('token');
             await updateUserData(userData, token);
             console.log("User data updated successfully");
-            navigate('/profile');
+            setSuccessMessage('Profile updated successfully!'); // Set success message
+            console.log('Updated user data:', userData); // Log the updated data to the console
         } catch (error) {
             setError('Failed to update user data.');
         } finally {
-            setLoading(false); // Reset loading state after submission
+            setLoading(false);
         }
     };
-
 
     return (
         <div className="container py-5">
@@ -66,7 +71,7 @@ export const UpdateProfile = () => {
                 <div className="card-body">
                     <form onSubmit={handleSubmit}>
                         <div className="row">
-                            <div className="col-12 mb-3">
+                            <div className="col-md-6 mb-3"> {/* Updated to 6 columns */}
                                 <label
                                     htmlFor="name"
                                     className="form-label fw-semibold text-primary mb-2"
@@ -82,7 +87,7 @@ export const UpdateProfile = () => {
                                     placeholder="Enter Full Name"
                                 />
                             </div>
-                            <div className="col-12 mb-3">
+                            <div className="col-md-6 mb-3"> {/* Updated to 6 columns */}
                                 <label
                                     htmlFor="email"
                                     className="form-label fw-semibold text-primary mb-2"
@@ -98,7 +103,7 @@ export const UpdateProfile = () => {
                                     placeholder="Enter email address"
                                 />
                             </div>
-                            <div className="col-12 mb-3">
+                            <div className="col-md-6 mb-3"> {/* Updated to 6 columns */}
                                 <label
                                     htmlFor="date_of_birth"
                                     className="form-label fw-semibold text-primary mb-2"
@@ -112,6 +117,70 @@ export const UpdateProfile = () => {
                                     value={userData.date_of_birth}
                                     onChange={handleChange}
                                     placeholder="Enter Date of Birth"
+                                />
+                            </div>
+                            <div className="col-md-6 mb-3"> {/* Updated to 6 columns */}
+                                <label
+                                    htmlFor="country"
+                                    className="form-label fw-semibold text-primary mb-2"
+                                >
+                                    Country
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control form-input"
+                                    id="country"
+                                    value={userData.country}
+                                    onChange={handleChange}
+                                    placeholder="Enter Country"
+                                />
+                            </div>
+                            <div className="col-md-6 mb-3"> {/* Updated to 6 columns */}
+                                <label
+                                    htmlFor="city"
+                                    className="form-label fw-semibold text-primary mb-2"
+                                >
+                                    City
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control form-input"
+                                    id="city"
+                                    value={userData.city}
+                                    onChange={handleChange}
+                                    placeholder="Enter City"
+                                />
+                            </div>
+                            <div className="col-md-6 mb-3"> {/* Updated to 6 columns */}
+                                <label
+                                    htmlFor="street"
+                                    className="form-label fw-semibold text-primary mb-2"
+                                >
+                                    Street
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control form-input"
+                                    id="street"
+                                    value={userData.street}
+                                    onChange={handleChange}
+                                    placeholder="Enter Street"
+                                />
+                            </div>
+                            <div className="col-md-6 mb-3"> {/* Updated to 6 columns */}
+                                <label
+                                    htmlFor="zipcode"
+                                    className="form-label fw-semibold text-primary mb-2"
+                                >
+                                    Zipcode
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control form-input"
+                                    id="zipcode"
+                                    value={userData.zipcode}
+                                    onChange={handleChange}
+                                    placeholder="Enter Zipcode"
                                 />
                             </div>
                         </div>
@@ -128,10 +197,10 @@ export const UpdateProfile = () => {
                             </button>
                         </div>
                     </form>
+                    {successMessage && <p className="text-success text-center mt-3">{successMessage}</p>} {/* Display success message */}
+                    {error && <p className="text-danger text-center mt-3">{error}</p>}
                 </div>
-                {error && <p className="text-danger text-center mt-3">{error}</p>}
             </div>
         </div>
     );
 };
-

@@ -7,6 +7,13 @@ export const ViewProfile = () => {
     name: '',
     email: '',
     date_of_birth: '',
+   address: {
+      country: '',
+      city: '',
+      street: '',
+     zipcode: ''
+
+  }
   });
   const [error, setError] = useState(null);
 
@@ -16,7 +23,12 @@ export const ViewProfile = () => {
         const data = await fetchUserData();
         console.log('Fetched user data:', data); // Check this output in the console
         if (data && data.user) {
-          setUserData(data.user);
+          setUserData({
+            name: data.user.name,
+            email: data.user.email,
+            date_of_birth: data.user.date_of_birth,
+            address: data.user.address || {}
+          })
         } else {
           setError("Failed to load user data.");
         }
@@ -59,6 +71,22 @@ export const ViewProfile = () => {
                       <li className="info-item">
                         <span className="info-label">Date of Birth</span>
                         <span className="info-value">{userData.date_of_birth}</span>
+                      </li>
+                      <li className="info-item">
+                        <span className="info-label">Country</span>
+                        <span className="info-value">{userData.address.country}</span>
+                      </li>
+                      <li className="info-item">
+                        <span className="info-label">City</span>
+                        <span className="info-value">{userData.address.city}</span>
+                      </li>
+                      <li className="info-item">
+                        <span className="info-label">Street</span>
+                        <span className="info-value">{userData.address.street}</span>
+                      </li>
+                      <li className="info-item">
+                        <span className="info-label">Zip Code</span>
+                        <span className="info-value">{userData.address.zipcode}</span>
                       </li>
                     </ul>
                   </div>

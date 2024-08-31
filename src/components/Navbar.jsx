@@ -29,13 +29,17 @@ const Navbar = () => {
                                 </button>
                                 <ul className="dropdown-menu container-fluid">
                                     <li>
+                                        <Link className="dropdown-item" to="/profile">Profile</Link>
+                                    </li>
+                                    <li>
                                         <Link className="dropdown-item" to="/order">Order</Link>
                                     </li>
                                     <li>
                                         <Link className="dropdown-item" to="/product-list">Product</Link>
                                     </li>
+
                                     <li>
-                                        <Link className="dropdown-item" to="/profile">Profile</Link>
+                                        <Link className="dropdown-item" to="/cart">Cart</Link>
                                     </li>
                                     <li>
                                         <Link className="dropdown-item" to="#" onClick={logout}>Logout</Link>

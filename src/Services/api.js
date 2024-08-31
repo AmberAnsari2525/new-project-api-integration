@@ -112,3 +112,14 @@ export const getOrderDetail = async (id) => {
         throw error;
     }
 };
+//confirm order
+export const confirmOrder = async (orderdata) => {
+    try{
+        const response = await axiosinstance.get ('orders' , orderdata);
+        return response.data;
+    }
+    catch (error){
+        console.error("Error fetching orders list:", error);
+        throw error;
+    }
+}

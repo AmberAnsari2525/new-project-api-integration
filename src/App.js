@@ -14,6 +14,8 @@ import {SingleProduct} from "./Pages/Singleproduct";
 import {AddProduct} from "./Pages/Addproduct";
 import {Order} from "./Pages/Order";
 import {OrderDetail} from "./Pages/OrderDetail";
+import  {Cart} from "./Pages/Cart";
+import {Checkout,} from "./Pages/checkOut";
 
 function App() {
   return (
@@ -74,9 +76,19 @@ function App() {
 
 
 
-            <Route path="/orders:id" element={
+            <Route path="/order-detail/:id" element={
               <AuthContext.Consumer>
                 {({ requireAuth }) => requireAuth(OrderDetail)}
+              </AuthContext.Consumer>
+            } />
+            <Route path="/cart" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(Cart)}
+              </AuthContext.Consumer>
+            } />
+            <Route path="/checkout" element={
+              <AuthContext.Consumer>
+                {({ requireAuth }) => requireAuth(Checkout)}
               </AuthContext.Consumer>
             } />
 

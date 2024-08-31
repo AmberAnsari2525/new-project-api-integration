@@ -56,7 +56,7 @@ export  const ProductList = (props) => {
                                     'No Image'
                                 )}
                             </td>
-                            <td>{list.price}</td>
+                            <td>${list.price}</td>
                             <td>{list.description}</td>
                             <td>{list.stock}</td>
                         </tr>
