@@ -7,7 +7,6 @@ export const Cart = () => {
     const navigate = useNavigate(); // Hook for navigation
 
     useEffect(() => {
-        // Get cart items from session storage
         const storedCart = JSON.parse(sessionStorage.getItem('cart')) || [];
         setCart(storedCart);
     }, []);
@@ -26,9 +25,7 @@ export const Cart = () => {
     };
 
     const handleCheckout = () => {
-        // Store only selected items in session storage
         sessionStorage.setItem('selectedItems', JSON.stringify(selectedItems));
-        // Navigate to the checkout page
         navigate('/checkout');
     };
 

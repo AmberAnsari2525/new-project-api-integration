@@ -27,6 +27,16 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    const signup = (token) => {
+        setToken(token); // Store the token in local storage
+        try {
+            const decodedToken = jwtDecode(token);
+            setUser(decodedToken);
+            navigate('/Profile'); // Navigate to the Profile page after login
+        } catch (error) {
+            console.error('Error decoding token on login', error);
+        }
+    };
     const login = (token) => {
         setToken(token); // Store the token in local storage
         try {
@@ -53,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, requireAuth, preventAuthAccess }}>
+        <AuthContext.Provider value={{ user, login, signup ,logout, requireAuth, preventAuthAccess }}>
             {children}
         </AuthContext.Provider>
     );

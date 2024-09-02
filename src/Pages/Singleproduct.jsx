@@ -7,6 +7,7 @@ export const SingleProduct = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [error, setError] = useState(null);
+    const [quantity, setQuantity] = useState(1); // State for product quantity
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -24,33 +25,33 @@ export const SingleProduct = () => {
     }, [id]);
 
     const addToCart = () => {
-        // Get existing cart items from session storage or initialize an empty array
         const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-
-        // Check if the product already exists in the cart
         const existingProductIndex = cart.findIndex(item => item.id === product.id);
 
         if (existingProductIndex !== -1) {
-            // If the product already exists, increase the quantity
-            cart[existingProductIndex].quantity += 1;
+            cart[existingProductIndex].quantity += quantity;
         } else {
-            // If the product doesn't exist, add it to the cart with quantity 1
-            cart.push({ ...product, quantity: 1 });
+            cart.push({ ...product, quantity });
         }
 
-        // Save the updated cart back to session storage
         sessionStorage.setItem('cart', JSON.stringify(cart));
 
-        // Show success message in console
         console.log('Product added to cart:', product);
 
-        // Show SweetAlert2 success alert
         Swal.fire({
             title: 'Added to Cart',
             text: 'Product added to cart successfully!',
             icon: 'success',
             confirmButtonText: 'OK'
         });
+    };
+
+    const increaseQuantity = () => {
+        setQuantity(prevQuantity => prevQuantity + 1);
+    };
+
+    const decreaseQuantity = () => {
+        setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
     };
 
     if (error) {
@@ -76,6 +77,11 @@ export const SingleProduct = () => {
                 <p className="card-text">Price: ${product.price}</p>
                 <p className="card-text">Description: {product.description}</p>
                 <p className="card-text">Stock: {product.stock}</p>
+                <div className="mb-3">
+                    <button className="btn btn-secondary" onClick={decreaseQuantity}>-</button>
+                    <span className="mx-2">{quantity}</span>
+                    <button className="btn btn-secondary" onClick={increaseQuantity}>+</button>
+                </div>
                 <button className="btn btn-primary" onClick={addToCart}>
                     Add to Cart
                 </button>

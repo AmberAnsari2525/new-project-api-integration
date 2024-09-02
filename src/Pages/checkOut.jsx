@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { updateUserData, fetchUserData, confirmOrder } from '../Services/api';
+import { confirmOrder, fetchUserData } from '../Services/api';
 import { Spinner } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 
 export const Checkout = () => {
     const [userData, setUserData] = useState({
         name: '',
         email: '',
-        password: '',
         country: '',
         city: '',
         street: '',
@@ -15,6 +15,7 @@ export const Checkout = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [showOrderDetails, setShowOrderDetails] = useState(false);
 
     const [cart, setCart] = useState([]);
     const [paymentMethod, setPaymentMethod] = useState('');
@@ -54,22 +55,6 @@ export const Checkout = () => {
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccessMessage('');
-        try {
-            const token = localStorage.getItem('token');
-            await updateUserData(userData, token);
-            setSuccessMessage('Profile updated successfully!');
-        } catch (error) {
-            setError('Failed to update user data.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handlePaymentMethodChange = (e) => {
         setPaymentMethod(e.target.value);
     };
@@ -101,20 +86,75 @@ export const Checkout = () => {
         );
     };
 
-    // Handler for removing a product from the cart
     const handleRemoveProduct = (id) => {
         setCart(prevCart => prevCart.filter(item => item.id !== id));
     };
 
+    const validateForm = () => {
+        const { name, email, country, city, street, zipcode } = userData;
+        return name && email && country && city && street && zipcode && paymentMethod;
+    };
+
     const handleOrder = async () => {
-        console.log("Order submitted with payment method:", paymentMethod);
-        // Add further order processing logic here
+        if (!validateForm()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Form Incomplete',
+                text: 'Please fill out all required fields and select a payment method before confirming the order.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        setShowOrderDetails(true);
+
         try {
-            await confirmOrder({ cart, paymentMethod, creditCardInfo });
-            setSuccessMessage('Order placed successfully!');
-            setCart([]); // Clear cart after successful order
+            const confirmResult = await Swal.fire({
+                icon: 'warning',
+                title: 'Confirm Order',
+                text: 'Are you sure you want to confirm the order?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            });
+
+            if (confirmResult.isConfirmed) {
+                console.log("Order Details:", { userData, cart, paymentMethod, creditCardInfo });
+
+                await confirmOrder({ cart, paymentMethod, creditCardInfo });
+                setSuccessMessage('Order placed successfully!');
+                setCart([]);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Confirmed',
+                    text: 'Your order has been placed successfully!',
+                    confirmButtonText: 'OK'
+                });
+
+                setShowOrderDetails(false);
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Order Cancelled',
+                    text: 'Your order has been cancelled.',
+                    confirmButtonText: 'OK'
+                });
+
+                setShowOrderDetails(false);
+            }
         } catch (error) {
             setError('Failed to place order.');
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Order Failed',
+                text: 'There was an issue with your order. Please try again.',
+                confirmButtonText: 'OK'
+            });
+
+            setShowOrderDetails(false);
         }
     };
 
@@ -123,85 +163,62 @@ export const Checkout = () => {
             <h2 className="mb-4">Checkout</h2>
             <div className="row">
                 <div className="col-md-4 mb-4">
-                    <h3>Edit Profile</h3>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group mb-3">
-                            <label htmlFor="name">Full Name <span className="text-danger">*</span></label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="name"
-                                value={userData.name}
-                                onChange={handleChange}
-                                placeholder="Enter Full Name"
-                            />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="email">Email <span className="text-danger">*</span></label>
-                            <input
-                                type="email"
-                                className="form-control"
-                                id="email"
-                                value={userData.email}
-                                onChange={handleChange}
-                                placeholder="Enter email address"
-                            />
-                        </div>
-
-                        <div className="form-group mb-3">
-                            <label htmlFor="country">Country</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="country"
-                                value={userData.country}
-                                onChange={handleChange}
-                                placeholder="Enter Country"
-                            />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="city">City</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="city"
-                                value={userData.city}
-                                onChange={handleChange}
-                                placeholder="Enter City"
-                            />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="street">Street</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="street"
-                                value={userData.street}
-                                onChange={handleChange}
-                                placeholder="Enter Street"
-                            />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="zipcode">Zipcode</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="zipcode"
-                                value={userData.zipcode}
-                                onChange={handleChange}
-                                placeholder="Enter Zipcode"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="btn btn-primary"
-                            disabled={loading}
-                        >
-                            {loading ? <Spinner animation="border" size="sm"/> : 'Update Profile'}
-                        </button>
-                        {successMessage && <p className="text-success mt-3">{successMessage}</p>}
-                        {error && <p className="text-danger mt-3">{error}</p>}
-                    </form>
+                    <h3>Update Information</h3>
+                    <div className="form-group mb-3">
+                        <label htmlFor="name">Full Name <span className="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="name"
+                            value={userData.name}
+                            onChange={handleChange}
+                            placeholder="Enter Full Name"
+                        />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="country">Country <span className="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="country"
+                            value={userData.country}
+                            onChange={handleChange}
+                            placeholder="Enter Country"
+                        />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="city">City <span className="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="city"
+                            value={userData.city}
+                            onChange={handleChange}
+                            placeholder="Enter City"
+                        />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="street">Street <span className="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="street"
+                            value={userData.street}
+                            onChange={handleChange}
+                            placeholder="Enter Street"
+                        />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="zipcode">Zipcode <span className="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="zipcode"
+                            value={userData.zipcode}
+                            onChange={handleChange}
+                            placeholder="Enter Zipcode"
+                        />
+                    </div>
                 </div>
 
                 <div className="col-md-8">
@@ -270,68 +287,81 @@ export const Checkout = () => {
                             <h5>Total Price: ${calculateTotal()}</h5>
 
                             <div className="mb-4">
-                                <label htmlFor="paymentMethod" className="form-label">Payment Method</label>
-                                <select
-                                    id="paymentMethod"
-                                    className="form-select"
-                                    value={paymentMethod}
-                                    onChange={handlePaymentMethodChange}
-                                >
-                                    <option value="">Select Payment Method</option>
-                                    <option value="creditCard">Credit Card</option>
-                                    <option value="paypal">PayPal</option>
-                                </select>
-                            </div>
-
-                            {paymentMethod === 'creditCard' && (
-                                <div>
-                                    <h5>Credit Card Details</h5>
-                                    <div className="form-group mb-3">
-                                        <label htmlFor="cardNumber">Card Number</label>
-                                        <input
-                                            type="text"
-                                            id="cardNumber"
-                                            className="form-control"
-                                            value={creditCardInfo.cardNumber}
-                                            onChange={handleCreditCardChange}
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label htmlFor="expiryDate">Expiry Date</label>
-                                        <input
-                                            type="text"
-                                            id="expiryDate"
-                                            className="form-control"
-                                            value={creditCardInfo.expiryDate}
-                                            onChange={handleCreditCardChange}
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label htmlFor="cvv">CVV</label>
-                                        <input
-                                            type="text"
-                                            id="cvv"
-                                            className="form-control"
-                                            value={creditCardInfo.cvv}
-                                            onChange={handleCreditCardChange}
-                                        />
-                                    </div>
+                                <h4>Payment Method <span className="text-danger">*</span></h4>
+                                <div className="form-check">
+                                    <input
+                                        type="radio"
+                                        className="form-check-input"
+                                        id="creditCard"
+                                        value="Credit Card"
+                                        checked={paymentMethod === 'Credit Card'}
+                                        onChange={handlePaymentMethodChange}
+                                    />
+                                    <label className="form-check-label" htmlFor="creditCard">Credit Card</label>
                                 </div>
-                            )}
+                                {paymentMethod === 'Credit Card' && (
+                                    <div className="mt-3">
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="cardNumber">Card Number <span className="text-danger">*</span></label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="cardNumber"
+                                                value={creditCardInfo.cardNumber}
+                                                onChange={handleCreditCardChange}
+                                                placeholder="Enter Card Number"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="expiryDate">Expiry Date <span className="text-danger">*</span></label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="expiryDate"
+                                                value={creditCardInfo.expiryDate}
+                                                onChange={handleCreditCardChange}
+                                                placeholder="MM/YY"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="cvv">CVV <span className="text-danger">*</span></label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="cvv"
+                                                value={creditCardInfo.cvv}
+                                                onChange={handleCreditCardChange}
+                                                placeholder="Enter CVV"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="form-check">
+                                    <input
+                                        type="radio"
+                                        className="form-check-input"
+                                        id="paypal"
+                                        value="PayPal"
+                                        checked={paymentMethod === 'PayPal'}
+                                        onChange={handlePaymentMethodChange}
+                                    />
+                                    <label className="form-check-label" htmlFor="paypal">PayPal</label>
+                                </div>
+                            </div>
 
                             <button
                                 className="btn btn-primary"
                                 onClick={handleOrder}
-                                disabled={cart.length === 0 || paymentMethod === ''}
+                                disabled={loading || cart.length === 0 || !paymentMethod}
                             >
-                                Place Order
+                                {loading ? <Spinner animation="border" size="sm" /> : 'Confirm Order'}
                             </button>
-                            {error && <p className="text-danger mt-3">{error}</p>}
-                            {successMessage && <p className="text-success mt-3">{successMessage}</p>}
                         </>
                     )}
                 </div>
             </div>
+            {successMessage && <p className="text-success mt-4">{successMessage}</p>}
+            {error && <p className="text-danger mt-4">{error}</p>}
         </div>
     );
 };
